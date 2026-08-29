@@ -1,7 +1,7 @@
-"""Игра «Змейка» (Изгиб Питона) с использованием библиотеки Pygame."""
+"""Модуль с реализацией игры «Змейка» (Изгиб Питона) на Pygame."""
 
-from random import randint
 import sys
+from random import randint
 
 import pygame
 
@@ -148,13 +148,25 @@ def handle_keys(game_object):
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and game_object.direction != DOWN:
+            if (
+                event.key == pygame.K_UP
+                and game_object.direction != DOWN
+            ):
                 game_object.next_direction = UP
-            elif event.key == pygame.K_DOWN and game_object.direction != UP:
+            elif (
+                event.key == pygame.K_DOWN
+                and game_object.direction != UP
+            ):
                 game_object.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
+            elif (
+                event.key == pygame.K_LEFT
+                and game_object.direction != RIGHT
+            ):
                 game_object.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
+            elif (
+                event.key == pygame.K_RIGHT
+                and game_object.direction != LEFT
+            ):
                 game_object.next_direction = RIGHT
 
 
