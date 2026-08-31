@@ -18,6 +18,18 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
+# Словарь поворотов: (текущее_направление, нажатая_клавиша) -> новое_направление
+TURNS = {
+    (UP, pygame.K_LEFT): LEFT,
+    (UP, pygame.K_RIGHT): RIGHT,
+    (DOWN, pygame.K_LEFT): LEFT,
+    (DOWN, pygame.K_RIGHT): RIGHT,
+    (LEFT, pygame.K_UP): UP,
+    (LEFT, pygame.K_DOWN): DOWN,
+    (RIGHT, pygame.K_UP): UP,
+    (RIGHT, pygame.K_DOWN): DOWN,
+}
+
 # Цвет фона игрового поля:
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
 
@@ -49,16 +61,15 @@ class GameObject:
 
     def draw(self):
         """Абстрактный метод для отрисовки объекта."""
-        pass
 
 
 class Apple(GameObject):
     """Класс, описывающий яблоко на игровом поле."""
 
-    def __init__(self, body_color=APPLE_COLOR):
+    def __init__(self, occupied_positions=None, body_color=APPLE_COLOR):
         """Инициализирует яблоко и его случайную позицию."""
         super().__init__(body_color)
-        self.randomize_position()
+        self.randomize_position(occupied_positions)
 
     def randomize_position(self, occupied_positions=None):
         """Устанавливает случайное положение яблока на игровом поле."""
@@ -147,35 +158,18 @@ def handle_keys(game_object):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if (
-                event.key == pygame.K_UP
-                and game_object.direction != DOWN
-            ):
-                game_object.next_direction = UP
-            elif (
-                event.key == pygame.K_DOWN
-                and game_object.direction != UP
-            ):
-                game_object.next_direction = DOWN
-            elif (
-                event.key == pygame.K_LEFT
-                and game_object.direction != RIGHT
-            ):
-                game_object.next_direction = LEFT
-            elif (
-                event.key == pygame.K_RIGHT
-                and game_object.direction != LEFT
-            ):
-                game_object.next_direction = RIGHT
+        if event.type == pygame.KEYDOWN:
+            game_object.next_direction = TURNS.get(
+                (game_object.direction, event.key),
+                game_object.next_direction,
+            )
 
 
 def main():
     """Основной игровой цикл."""
     pygame.init()
     snake = Snake()
-    apple = Apple()
-    apple.randomize_position(snake.positions)
+    apple = Apple(snake.positions)
     screen.fill(BOARD_BACKGROUND_COLOR)
 
     while True:
